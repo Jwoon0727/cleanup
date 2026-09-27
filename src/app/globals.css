@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/* 라이트 전용 UI. 포인트 색: #746B83 */
+:root {
+  color-scheme: light;
+
+  --background: #ffffff;
+  --foreground: #1f1b26;
+
+  /* 포인트 색 스케일 (#746B83 기준) */
+  --brand-50: #f6f5f8;
+  --brand-100: #eceaf0;
+  --brand-200: #dbd7e2;
+  --brand-300: #c2bccd;
+  --brand-400: #9c94ab;
+  --brand-500: #746b83;
+  --brand-600: #635a71;
+  --brand-700: #51495d;
+  --brand-800: #3e3847;
+  --brand-900: #2b2732;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
