@@ -533,9 +533,9 @@ export function ZoneChecklist({ config }: { config: ZoneChecklistConfig }) {
               key={`${checklistTab.key}-${gi}`}
               className="rounded-xl bg-brand-50/60 p-4 ring-1 ring-inset ring-brand-100"
             >
-              <h3 className="text-sm font-bold text-zinc-900">{group.title}</h3>
+              <h3 className="text-sm font-bold text-black">{group.title}</h3>
               {group.hint ? (
-                <p className="mt-1 text-xs text-zinc-600">{group.hint}</p>
+                <p className="mt-1 text-xs font-normal text-blue-600">{group.hint}</p>
               ) : null}
 
               <ul className="mt-3 flex flex-col gap-1.5">
@@ -575,7 +575,7 @@ export function ZoneChecklist({ config }: { config: ZoneChecklistConfig }) {
                             {label}
                           </span>
                           {note ? (
-                            <span className="text-xs leading-5 text-zinc-600">
+                            <span className="text-xs leading-5 text-blue-600">
                               {note}
                             </span>
                           ) : null}

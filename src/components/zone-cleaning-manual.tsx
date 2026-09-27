@@ -16,14 +16,14 @@ export function ZoneCleaningManual({ code }: { code: string }) {
           return (
             <div key={rowKey} className="px-4 py-3.5 sm:px-5">
               {entry.heading ? (
-                <p className="text-sm font-bold leading-6 text-zinc-900">
+                <p className="text-sm font-bold leading-6 text-black">
                   {entry.heading}
                 </p>
               ) : null}
               {entry.instructions?.map((line) => (
                 <p
                   key={`${rowKey}-${line}`}
-                  className={`text-sm leading-5 text-blue-700${entry.heading ? " mt-1" : ""}`}
+                  className={`text-sm font-normal leading-5 text-blue-600${entry.heading ? " mt-1" : ""}`}
                 >
                   {line}
                 </p>
