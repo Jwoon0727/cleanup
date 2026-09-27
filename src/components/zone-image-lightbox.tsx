@@ -40,6 +40,7 @@ export function ZoneImageLightbox({ src, label }: Props) {
           src={src}
           alt={`${label} 사진`}
           fill
+          priority
           sizes="(max-width: 640px) 100vw, 640px"
           className="pointer-events-none object-contain p-1"
         />

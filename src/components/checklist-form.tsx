@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { submitChecklistAction } from "@/actions/submissions";
 import { checklistFieldName } from "@/lib/checklist";
 import { FormMessage } from "@/components/form-message";
@@ -23,6 +23,7 @@ export function ChecklistForm({
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [congregation, setCongregation] = useState("");
   const [volunteerName, setVolunteerName] = useState("");
+  const [submitOpen, setSubmitOpen] = useState(false);
 
   const [state, action, pending] = useActionState<FormState, FormData>(
     submitChecklistAction,
@@ -33,6 +34,15 @@ export function ChecklistForm({
   const allChecked = items.length === 0 || checkedCount === items.length;
   const canSubmit =
     allChecked && congregation.trim().length > 0 && volunteerName.trim().length > 0;
+
+  const authorSummary =
+    congregation.trim() && volunteerName.trim()
+      ? `${congregation.trim()} · ${volunteerName.trim()}`
+      : "회중과 이름을 입력해 주세요";
+
+  useEffect(() => {
+    if (state && !state.ok) setSubmitOpen(true);
+  }, [state]);
 
   if (state?.ok) {
     return (
@@ -85,71 +95,92 @@ export function ChecklistForm({
         </section>
       )}
 
-      <section className="flex flex-col gap-4 rounded-2xl bg-white p-5 ring-1 ring-brand-100">
-        <h2 className="text-base font-semibold text-zinc-900">
-          작성자
-        </h2>
-
-        {hasAssignee && (
-          <p className="rounded-lg bg-brand-50 px-3 py-2.5 text-xs leading-5 text-brand-700 ring-1 ring-inset ring-brand-100">
-            이 구역은 지정된 봉사자만 제출할 수 있습니다. 지정된 회중·이름과 다르면
-            제출되지 않습니다.
-          </p>
-        )}
-
-        <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="congregation"
-            className="text-sm font-medium text-zinc-700"
+      <section className="overflow-hidden rounded-2xl bg-white ring-1 ring-brand-100">
+        <button
+          type="button"
+          onClick={() => setSubmitOpen((open) => !open)}
+          className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition hover:bg-brand-50/80 sm:px-5"
+          aria-expanded={submitOpen}
+        >
+          <span className="text-sm font-semibold text-zinc-900">작성자 · 제출</span>
+          <span className="min-w-0 flex-1 truncate text-xs text-zinc-500">
+            {canSubmit ? "제출 준비됨" : authorSummary}
+          </span>
+          <span
+            className={[
+              "shrink-0 text-xs text-zinc-400 transition-transform",
+              submitOpen ? "rotate-180" : "",
+            ].join(" ")}
+            aria-hidden
           >
-            회중
-          </label>
-          <input
-            id="congregation"
-            name="congregation"
-            value={congregation}
-            onChange={(e) => setCongregation(e.target.value)}
-            required
-            maxLength={100}
-            className={inputClass}
-            placeholder="회중 이름"
-          />
-        </div>
+            ▼
+          </span>
+        </button>
 
-        <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="volunteerName"
-            className="text-sm font-medium text-zinc-700"
-          >
-            이름
-          </label>
-          <input
-            id="volunteerName"
-            name="volunteerName"
-            value={volunteerName}
-            onChange={(e) => setVolunteerName(e.target.value)}
-            required
-            maxLength={50}
-            className={inputClass}
-            placeholder="작성자 이름"
-          />
-        </div>
+        {submitOpen ? (
+          <div className="flex flex-col gap-4 border-t border-brand-100 px-4 pb-5 pt-4 sm:px-5">
+            {hasAssignee && (
+              <p className="rounded-lg bg-brand-50 px-3 py-2.5 text-xs leading-5 text-brand-700 ring-1 ring-inset ring-brand-100">
+                이 구역은 지정된 봉사자만 제출할 수 있습니다. 지정된 회중·이름과
+                다르면 제출되지 않습니다.
+              </p>
+            )}
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="congregation"
+                className="text-sm font-medium text-zinc-700"
+              >
+                회중
+              </label>
+              <input
+                id="congregation"
+                name="congregation"
+                value={congregation}
+                onChange={(e) => setCongregation(e.target.value)}
+                required
+                maxLength={100}
+                className={inputClass}
+                placeholder="회중 이름"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="volunteerName"
+                className="text-sm font-medium text-zinc-700"
+              >
+                이름
+              </label>
+              <input
+                id="volunteerName"
+                name="volunteerName"
+                value={volunteerName}
+                onChange={(e) => setVolunteerName(e.target.value)}
+                required
+                maxLength={50}
+                className={inputClass}
+                placeholder="작성자 이름"
+              />
+            </div>
+
+            <FormMessage state={state} />
+
+            <div className="flex flex-col gap-2">
+              <SubmitButton pending={pending} disabled={!canSubmit} className="w-full">
+                제출하기
+              </SubmitButton>
+              {!canSubmit && (
+                <p className="text-center text-xs text-zinc-500">
+                  {items.length > 0 && !allChecked
+                    ? `모든 항목을 체크해 주세요. (${items.length - checkedCount}개 남음)`
+                    : "회중과 이름을 입력해 주세요."}
+                </p>
+              )}
+            </div>
+          </div>
+        ) : null}
       </section>
-
-      <FormMessage state={state} />
-
-      <div className="flex flex-col gap-2">
-        <SubmitButton pending={pending} disabled={!canSubmit} className="w-full">
-          제출하기
-        </SubmitButton>
-        {!canSubmit && (
-          <p className="text-center text-xs text-zinc-500">
-            {items.length > 0 && !allChecked
-              ? `모든 항목을 체크해 주세요. (${items.length - checkedCount}개 남음)`
-              : "회중과 이름을 입력해 주세요."}
-          </p>
-        )}
-      </div>
     </form>
   );
 }
