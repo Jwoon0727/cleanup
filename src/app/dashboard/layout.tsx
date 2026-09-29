@@ -11,7 +11,7 @@ export default function DashboardLayout({
             href="/dashboard"
             className="text-base font-semibold tracking-tight text-zinc-900"
           >
-            청소 구역 관리
+            천안대회회관 청소구역 관리
           </Link>
         </div>
       </header>

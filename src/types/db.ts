@@ -15,6 +15,9 @@ export type Zone = {
   /** 0003_single_submission_and_assignee.sql 적용 후에만 존재. 둘 다 null 이면 미지정 */
   assignee_name: string | null;
   assignee_congregation: string | null;
+  /** 0004_zone_contact.sql 적용 후에만 존재. 봉사자 URL 하단 안내 문구용 */
+  contact_name?: string | null;
+  contact_phone?: string | null;
 };
 
 export type ChecklistItem = {

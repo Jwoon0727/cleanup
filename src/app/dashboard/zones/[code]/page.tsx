@@ -10,7 +10,12 @@ import { ZoneChecklistByCode } from "@/components/zone-checklist-by-code";
 import { ZoneCleaningManual } from "@/components/zone-cleaning-manual";
 import { ZoneAssigneeForm } from "@/components/zone-assignee-form";
 import { ResetForm } from "@/components/reset-form";
-import { getChecklistItems, getSubmission, getZoneByCode } from "@/lib/dal";
+import {
+  getCheckMarks,
+  getChecklistItems,
+  getSubmission,
+  getZoneByCode,
+} from "@/lib/dal";
 import { hasOwnChecklist } from "@/lib/zone-checklist-registry";
 
 export default async function ZoneDetailPage({
@@ -21,9 +26,12 @@ export default async function ZoneDetailPage({
 
   if (!zone) notFound();
 
-  const [items, submission] = await Promise.all([
+  const ownChecklist = hasOwnChecklist(zone.code);
+
+  const [items, submission, checkMarks] = await Promise.all([
     getChecklistItems(zone.id),
     getSubmission(zone.id),
+    ownChecklist ? getCheckMarks(zone.id) : {},
   ]);
 
   return (
@@ -54,14 +62,18 @@ export default async function ZoneDetailPage({
       <ZoneImage code={zone.code} label={zone.label} />
 
       <ZoneAssigneeForm
-        key={`${zone.assignee_congregation ?? ""}-${zone.assignee_name ?? ""}`}
+        key={`${zone.assignee_congregation ?? ""}-${zone.assignee_name ?? ""}-${zone.contact_name ?? ""}-${zone.contact_phone ?? ""}`}
         zone={zone}
       />
 
       <ZoneCleaningManual code={zone.code} />
 
-      {hasOwnChecklist(zone.code) ? (
-        <ZoneChecklistByCode code={zone.code} />
+      {ownChecklist ? (
+        <ZoneChecklistByCode
+          code={zone.code}
+          token={zone.token}
+          initialMarks={checkMarks}
+        />
       ) : (
         <ChecklistPreview items={items} />
       )}

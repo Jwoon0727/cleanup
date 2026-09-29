@@ -3,7 +3,7 @@ import { ZoneCard } from "@/components/zone-card";
 import { getSubmission, listZones } from "@/lib/dal";
 
 export const metadata = {
-  title: "대시보드 · 청소 구역 관리",
+  title: "대시보드 · 천안대회회관 청소구역 관리",
 };
 
 export default async function DashboardPage() {

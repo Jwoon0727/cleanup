@@ -1,6 +1,11 @@
 import "server-only";
 import { cache } from "react";
 import { getSupabase } from "@/lib/supabase";
+import {
+  rowsToSnapshot,
+  type CheckMarkRow,
+  type MarkSnapshot,
+} from "@/lib/check-marks";
 import type {
   ChecklistItem,
   Submission,
@@ -84,5 +89,18 @@ export const getSubmission = cache(
       throw new Error(`체크 내역 조회 실패: ${itemsError.message}`);
 
     return { ...row, items: (itemsData ?? []) as SubmissionItem[] };
+  },
+);
+
+/** 봉사자 URL 체크리스트의 공유 체크·수량 상태 (0005 마이그레이션) */
+export const getCheckMarks = cache(
+  async (zoneId: string): Promise<MarkSnapshot> => {
+    const { data, error } = await getSupabase()
+      .from("zone_check_marks")
+      .select("key, value, updated_at")
+      .eq("zone_id", zoneId);
+
+    if (error) throw new Error(`체크 상태 조회 실패: ${error.message}`);
+    return rowsToSnapshot((data ?? []) as CheckMarkRow[]);
   },
 );

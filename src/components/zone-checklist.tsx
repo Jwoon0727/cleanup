@@ -1,6 +1,16 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState } from "react";
+import {
+  checkKey,
+  checkTabPrefix,
+  qtyKey,
+  returnKey,
+  SUPPLIES_PREFIXES,
+  type MarkSnapshot,
+  type MarkValue,
+} from "@/lib/check-marks";
+import { useZoneCheckMarks, type SyncStatus } from "@/lib/use-zone-check-marks";
 
 export type CleaningTool = { id: string; label: string };
 
@@ -44,8 +54,8 @@ export type ZoneChecklistConfig = {
   headerTitle: string;
   areaDescription: string;
   footerNote: string;
+  /** 입력 id 접두어용 구역 식별자 */
   checklistStorageKey: string;
-  suppliesStorageKey: string;
   cleaningTools: readonly CleaningTool[];
   tabs: ZoneTabDef[];
   defaultTabKey: string;
@@ -58,22 +68,16 @@ type SuppliesSnapshot = {
   returnOk: Record<string, boolean>;
 };
 
-const emptySupplies: SuppliesSnapshot = { qty: {}, returnOk: {} };
-
-function keyOf(tabKey: string, gi: number, ii: number) {
-  return `${tabKey}::${gi}::${ii}`;
-}
-
 function countChecklistTab(
   tab: ChecklistTabDef,
-  checked: Record<string, boolean>,
+  checked: Record<string, MarkValue>,
 ) {
   let total = 0;
   let done = 0;
   tab.groups.forEach((g, gi) => {
     g.items.forEach((_, ii) => {
       total += 1;
-      if (checked[keyOf(tab.key, gi, ii)]) done += 1;
+      if (checked[checkKey(tab.key, gi, ii)] === true) done += 1;
     });
   });
   return { total, done };
@@ -101,7 +105,7 @@ function countSuppliesTab(
 
 function countTab(
   tab: ZoneTabDef,
-  checked: Record<string, boolean>,
+  checked: Record<string, MarkValue>,
   supplies: SuppliesSnapshot,
   cleaningTools: readonly CleaningTool[],
 ) {
@@ -109,121 +113,44 @@ function countTab(
   return countChecklistTab(tab, checked);
 }
 
-function createChecklistStore(storageKey: string) {
-  const listeners = new Set<() => void>();
-  let cachedSnapshot: Record<string, boolean> = {};
-  let cachedSnapshotRaw: string | null = null;
-  const emptySnapshot: Record<string, boolean> = {};
-
-  function read(): Record<string, boolean> {
-    if (typeof window === "undefined") return cachedSnapshot;
-    let raw: string | null = null;
-    try {
-      raw = window.localStorage.getItem(storageKey);
-    } catch {
-      raw = null;
-    }
-    if (raw === cachedSnapshotRaw) return cachedSnapshot;
-    cachedSnapshotRaw = raw;
-    try {
-      cachedSnapshot = raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
-    } catch {
-      cachedSnapshot = {};
-    }
-    return cachedSnapshot;
+function suppliesFromMarks(
+  marks: Record<string, MarkValue>,
+  cleaningTools: readonly CleaningTool[],
+): SuppliesSnapshot {
+  const qty: Record<string, string> = {};
+  const returnOk: Record<string, boolean> = {};
+  for (const tool of cleaningTools) {
+    const q = marks[qtyKey(tool.id)];
+    if (typeof q === "string") qty[tool.id] = q;
+    if (marks[returnKey(tool.id)] === true) returnOk[tool.id] = true;
   }
-
-  function write(next: Record<string, boolean>) {
-    cachedSnapshot = next;
-    cachedSnapshotRaw = JSON.stringify(next);
-    if (typeof window !== "undefined") {
-      try {
-        window.localStorage.setItem(storageKey, cachedSnapshotRaw);
-      } catch {
-        // ignore
-      }
-    }
-    listeners.forEach((fn) => fn());
-  }
-
-  function subscribe(fn: () => void) {
-    listeners.add(fn);
-    return () => {
-      listeners.delete(fn);
-    };
-  }
-
-  function getServerSnapshot() {
-    return emptySnapshot;
-  }
-
-  return { read, write, subscribe, getServerSnapshot };
+  return { qty, returnOk };
 }
 
-function createSuppliesStore(storageKey: string) {
-  const listeners = new Set<() => void>();
-  let cachedSupplies: SuppliesSnapshot = emptySupplies;
-  let cachedSuppliesRaw: string | null = null;
-
-  function read(): SuppliesSnapshot {
-    if (typeof window === "undefined") return cachedSupplies;
-    let raw: string | null = null;
-    try {
-      raw = window.localStorage.getItem(storageKey);
-    } catch {
-      raw = null;
-    }
-    if (raw === cachedSuppliesRaw) return cachedSupplies;
-    cachedSuppliesRaw = raw;
-    try {
-      const parsed = raw ? (JSON.parse(raw) as SuppliesSnapshot) : emptySupplies;
-      cachedSupplies = {
-        qty: parsed.qty ?? {},
-        returnOk: parsed.returnOk ?? {},
-      };
-    } catch {
-      cachedSupplies = emptySupplies;
-    }
-    return cachedSupplies;
-  }
-
-  function write(next: SuppliesSnapshot) {
-    cachedSupplies = next;
-    cachedSuppliesRaw = JSON.stringify(next);
-    if (typeof window !== "undefined") {
-      try {
-        window.localStorage.setItem(storageKey, cachedSuppliesRaw);
-      } catch {
-        // ignore
-      }
-    }
-    listeners.forEach((fn) => fn());
-  }
-
-  function subscribe(fn: () => void) {
-    listeners.add(fn);
-    return () => {
-      listeners.delete(fn);
-    };
-  }
-
-  function getServerSnapshot() {
-    return emptySupplies;
-  }
-
-  return { read, write, subscribe, getServerSnapshot };
-}
+const SYNC_STATUS_META: Record<SyncStatus, { label: string; dot: string }> = {
+  live: { label: "실시간 공유 중", dot: "bg-emerald-500" },
+  connecting: { label: "연결 중…", dot: "bg-amber-400" },
+  polling: { label: "자동 동기화 중", dot: "bg-sky-500" },
+  offline: { label: "연결 끊김 · 재연결 중", dot: "bg-red-500" },
+};
 
 const inputClass =
   "w-20 rounded-lg border-0 bg-white px-2.5 py-2 text-center text-sm text-zinc-900 tabular-nums ring-1 ring-inset ring-brand-200 outline-none placeholder:text-zinc-400 focus:ring-2 focus:ring-brand-500 sm:w-24";
 
-export function ZoneChecklist({ config }: { config: ZoneChecklistConfig }) {
+export function ZoneChecklist({
+  config,
+  token,
+  initialMarks,
+}: {
+  config: ZoneChecklistConfig;
+  token: string;
+  initialMarks: MarkSnapshot;
+}) {
   const {
     headerTitle,
     areaDescription,
     footerNote,
     checklistStorageKey,
-    suppliesStorageKey,
     cleaningTools,
     tabs,
     defaultTabKey,
@@ -232,69 +159,40 @@ export function ZoneChecklist({ config }: { config: ZoneChecklistConfig }) {
 
   const idPrefix = checklistStorageKey.replace(/[^a-z0-9]/gi, "-");
 
-  const checklistStore = useMemo(
-    () => createChecklistStore(checklistStorageKey),
-    [checklistStorageKey],
-  );
-  const suppliesStore = useMemo(
-    () => createSuppliesStore(suppliesStorageKey),
-    [suppliesStorageKey],
-  );
-
   const [active, setActive] = useState(defaultTabKey);
-  const checked = useSyncExternalStore(
-    checklistStore.subscribe,
-    checklistStore.read,
-    checklistStore.getServerSnapshot,
-  );
-  const supplies = useSyncExternalStore(
-    suppliesStore.subscribe,
-    suppliesStore.read,
-    suppliesStore.getServerSnapshot,
-  );
-
-  const hydrated = useSyncExternalStore(
-    checklistStore.subscribe,
-    () => true,
-    () => false,
+  const {
+    marks: checked,
+    status,
+    error,
+    setMark,
+    clearMarks,
+  } = useZoneCheckMarks(token, initialMarks);
+  const supplies = useMemo(
+    () => suppliesFromMarks(checked, cleaningTools),
+    [checked, cleaningTools],
   );
 
-  const toggle = (id: string) => {
-    const snap = checklistStore.read();
-    checklistStore.write({ ...snap, [id]: !snap[id] });
-  };
+  const toggle = (id: string) => setMark(id, checked[id] !== true);
 
-  const setToolQty = (toolId: string, value: string) => {
-    const snap = suppliesStore.read();
-    suppliesStore.write({
-      ...snap,
-      qty: { ...snap.qty, [toolId]: value },
-    });
-  };
+  const setToolQty = (toolId: string, value: string) =>
+    setMark(qtyKey(toolId), value, 500);
 
-  const toggleReturnOk = (toolId: string) => {
-    const snap = suppliesStore.read();
-    suppliesStore.write({
-      ...snap,
-      returnOk: { ...snap.returnOk, [toolId]: !snap.returnOk[toolId] },
-    });
-  };
+  const toggleReturnOk = (toolId: string) =>
+    setMark(returnKey(toolId), !supplies.returnOk[toolId]);
 
   const resetActive = () => {
     const tab = tabs.find((t) => t.key === active);
     if (!tab) return;
-    if (!confirm(`"${tab.short}" 탭의 입력·체크를 모두 초기화할까요?`)) {
+    if (
+      !confirm(
+        `"${tab.short}" 탭의 입력·체크를 모두 초기화할까요?\n같은 구역 봉사자 모두의 화면에서 함께 초기화됩니다.`,
+      )
+    ) {
       return;
     }
-    if (active === "supplies") {
-      suppliesStore.write(emptySupplies);
-      return;
-    }
-    const next = { ...checklistStore.read() };
-    Object.keys(next).forEach((k) => {
-      if (k.startsWith(`${active}::`)) delete next[k];
-    });
-    checklistStore.write(next);
+    clearMarks(
+      active === "supplies" ? SUPPLIES_PREFIXES : [checkTabPrefix(active)],
+    );
   };
 
   const activeTab = tabs.find((t) => t.key === active)!;
@@ -323,6 +221,26 @@ export function ZoneChecklist({ config }: { config: ZoneChecklistConfig }) {
         </button>
       </div>
 
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-zinc-500">
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            aria-hidden
+            className={`h-2 w-2 rounded-full ${SYNC_STATUS_META[status].dot}`}
+          />
+          {SYNC_STATUS_META[status].label}
+        </span>
+        <span>· 같은 구역 봉사자와 체크 상태가 공유됩니다.</span>
+      </div>
+
+      {error ? (
+        <p
+          role="alert"
+          className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700 ring-1 ring-inset ring-red-200"
+        >
+          {error}
+        </p>
+      ) : null}
+
       <div
         role="tablist"
         aria-label="청소 체크리스트 시점"
@@ -336,7 +254,7 @@ export function ZoneChecklist({ config }: { config: ZoneChecklistConfig }) {
             cleaningTools,
           );
           const isActive = tab.key === active;
-          const complete = hydrated && total > 0 && done === total;
+          const complete = total > 0 && done === total;
           return (
             <button
               key={tab.key}
@@ -365,7 +283,7 @@ export function ZoneChecklist({ config }: { config: ZoneChecklistConfig }) {
                       : "text-zinc-500",
                 ].join(" ")}
               >
-                {hydrated ? `${done} / ${total}` : `0 / ${total}`}
+                {done} / {total}
                 {complete ? " ✓ 완료" : ""}
               </span>
             </button>
@@ -540,8 +458,8 @@ export function ZoneChecklist({ config }: { config: ZoneChecklistConfig }) {
 
               <ul className="mt-3 flex flex-col gap-1.5">
                 {group.items.map((item, ii) => {
-                  const id = keyOf(checklistTab.key, gi, ii);
-                  const isChecked = !!checked[id];
+                  const id = checkKey(checklistTab.key, gi, ii);
+                  const isChecked = checked[id] === true;
                   const label = checklistItemLabel(item);
                   const note = checklistItemNote(item);
                   return (

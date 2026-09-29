@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ZoneChecklist,
   type ChecklistGroup,
   type CleaningTool,
   type ZoneChecklistConfig,
@@ -62,9 +61,8 @@ export const ZONE_E_CONFIG: ZoneChecklistConfig = {
   headerTitle: "청소 체크리스트 (E구역)",
   areaDescription: "담당구역: E구역",
   footerNote:
-    "* 체크·수량 입력은 이 브라우저에만 저장됩니다. 청소가 끝나면 청소부 요원에게 결과를 알려주세요.",
+    "* 체크·수량 입력은 같은 구역 봉사자 모두에게 실시간으로 공유됩니다. 청소가 끝나면 청소부 요원에게 결과를 알려주세요.",
   checklistStorageKey: "zone-e-checklist-v1",
-  suppliesStorageKey: "zone-e-supplies-v1",
   cleaningTools: CLEANING_TOOLS,
   defaultTabKey: "lunch",
   tabGridClass: "grid grid-cols-2 gap-1.5 sm:grid-cols-4",
@@ -98,7 +96,3 @@ export const ZONE_E_CONFIG: ZoneChecklistConfig = {
     },
   ],
 };
-
-export function ZoneEChecklist() {
-  return <ZoneChecklist config={ZONE_E_CONFIG} />;
-}

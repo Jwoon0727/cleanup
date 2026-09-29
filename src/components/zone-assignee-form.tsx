@@ -13,6 +13,8 @@ const inputClass =
 export function ZoneAssigneeForm({ zone }: { zone: Zone }) {
   const [congregation, setCongregation] = useState(zone.assignee_congregation ?? "");
   const [name, setName] = useState(zone.assignee_name ?? "");
+  const [contactName, setContactName] = useState(zone.contact_name ?? "");
+  const [contactPhone, setContactPhone] = useState(zone.contact_phone ?? "");
 
   const [saveState, save, savePending] = useActionState<FormState, FormData>(
     setZoneAssigneeAction,
@@ -71,6 +73,43 @@ export function ZoneAssigneeForm({ zone }: { zone: Zone }) {
           />
         </div>
 
+        <div className="border-t border-brand-100 pt-4">
+          <p className="text-sm font-semibold text-zinc-900">청소부 요원 (결과 연락)</p>
+          <p className="mt-1 text-xs text-zinc-500">
+            봉사자 URL 하단에 &quot;청소가 끝나면 청소부 요원(이름, 연락처)에게 결과를 알려주세요&quot; 안내로 표시됩니다.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="contactName" className="text-sm font-medium text-zinc-700">
+            청소부 요원 이름
+          </label>
+          <input
+            id="contactName"
+            name="contactName"
+            value={contactName}
+            onChange={(e) => setContactName(e.target.value)}
+            maxLength={50}
+            className={inputClass}
+            placeholder="예) 김현철 형제"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="contactPhone" className="text-sm font-medium text-zinc-700">
+            청소부 요원 연락처
+          </label>
+          <input
+            id="contactPhone"
+            name="contactPhone"
+            value={contactPhone}
+            onChange={(e) => setContactPhone(e.target.value)}
+            maxLength={30}
+            className={inputClass}
+            placeholder="예) 010-5329-2792"
+          />
+        </div>
+
         <FormMessage state={state} />
 
         <div className="flex flex-wrap gap-3">
@@ -84,8 +123,10 @@ export function ZoneAssigneeForm({ zone }: { zone: Zone }) {
         <input type="hidden" name="code" value={zone.code} />
         <input type="hidden" name="assigneeCongregation" value="" />
         <input type="hidden" name="assigneeName" value="" />
+        <input type="hidden" name="contactName" value={contactName} />
+        <input type="hidden" name="contactPhone" value={contactPhone} />
         <SubmitButton pending={clearPending} disabled={pending} variant="ghost">
-          지정 해제
+          지정 제출자만 해제
         </SubmitButton>
       </form>
     </div>

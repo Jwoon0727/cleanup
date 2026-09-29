@@ -9,6 +9,8 @@ export const zoneAssigneeSchema = z
   .object({
     assigneeCongregation: z.string().trim().max(100),
     assigneeName: z.string().trim().max(50),
+    contactName: z.string().trim().max(50).optional().default(""),
+    contactPhone: z.string().trim().max(30).optional().default(""),
   })
   .refine(
     (data) =>

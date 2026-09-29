@@ -1,10 +1,16 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ChecklistForm } from "@/components/checklist-form";
+import { ContactNotice } from "@/components/contact-notice";
 import { ZoneChecklistByCode } from "@/components/zone-checklist-by-code";
 import { ZoneCleaningManual } from "@/components/zone-cleaning-manual";
 import { ZoneImage } from "@/components/zone-image";
-import { getChecklistItems, getSubmission, getZoneByToken } from "@/lib/dal";
+import {
+  getCheckMarks,
+  getChecklistItems,
+  getSubmission,
+  getZoneByToken,
+} from "@/lib/dal";
 import { canVolunteerSubmit } from "@/lib/zone-status";
 import { hasAssignee } from "@/lib/assignee";
 import { hasOwnChecklist } from "@/lib/zone-checklist-registry";
@@ -23,12 +29,16 @@ export default async function VolunteerChecklistPage({
 
   if (!zone) notFound();
 
-  const [items, submission] = await Promise.all([
+  const submittable = canVolunteerSubmit(zone.status);
+  const ownChecklist = hasOwnChecklist(zone.code);
+
+  const [items, submission, checkMarks] = await Promise.all([
     getChecklistItems(zone.id),
     getSubmission(zone.id),
+    submittable && ownChecklist ? getCheckMarks(zone.id) : {},
   ]);
-
-  const submittable = canVolunteerSubmit(zone.status);
+  const contactName = zone.contact_name;
+  const contactPhone = zone.contact_phone;
 
   return (
     <div className="flex flex-1 justify-center bg-brand-50 px-5 py-10">
@@ -37,9 +47,15 @@ export default async function VolunteerChecklistPage({
           <p className="text-xs font-medium tracking-wide text-zinc-500 uppercase">
             청소 체크리스트
           </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
-            {zone.label}
-          </h1>
+          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+              {zone.label}
+            </h1>
+            <ContactNotice
+              contactName={contactName}
+              contactPhone={contactPhone}
+            />
+          </div>
         </header>
 
         <ZoneImage code={zone.code} label={zone.label} />
@@ -47,9 +63,13 @@ export default async function VolunteerChecklistPage({
         <ZoneCleaningManual code={zone.code} />
 
         {submittable ? (
-          hasOwnChecklist(zone.code) ? (
+          ownChecklist ? (
             <>
-              <ZoneChecklistByCode code={zone.code} />
+              <ZoneChecklistByCode
+                code={zone.code}
+                token={zone.token}
+                initialMarks={checkMarks}
+              />
               <ChecklistForm
                 token={zone.token}
                 items={[]}
@@ -84,6 +104,11 @@ export default async function VolunteerChecklistPage({
             )}
           </div>
         )}
+
+        <ContactNotice
+          contactName={contactName}
+          contactPhone={contactPhone}
+        />
       </div>
     </div>
   );

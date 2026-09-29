@@ -16,6 +16,8 @@ export async function setZoneAssigneeAction(
   const parsed = zoneAssigneeSchema.safeParse({
     assigneeCongregation: formData.get("assigneeCongregation") ?? "",
     assigneeName: formData.get("assigneeName") ?? "",
+    contactName: formData.get("contactName") ?? "",
+    contactPhone: formData.get("contactPhone") ?? "",
   });
 
   if (!parsed.success) {
@@ -40,16 +42,20 @@ export async function setZoneAssigneeAction(
   if (!zone) return { ok: false, message: "존재하지 않는 구역입니다." };
 
   const isCleared = parsed.data.assigneeCongregation.length === 0;
+  const contactName = parsed.data.contactName.length === 0 ? null : parsed.data.contactName;
+  const contactPhone = parsed.data.contactPhone.length === 0 ? null : parsed.data.contactPhone;
 
   const { error } = await supabase
     .from("zones")
     .update({
       assignee_congregation: isCleared ? null : parsed.data.assigneeCongregation,
       assignee_name: isCleared ? null : parsed.data.assigneeName,
+      contact_name: contactName,
+      contact_phone: contactPhone,
     })
     .eq("id", zone.id);
 
-  if (error) return { ok: false, message: `지정 제출자 저장 실패: ${error.message}` };
+  if (error) return { ok: false, message: `저장 실패: ${error.message}` };
 
   revalidatePath("/dashboard");
   revalidatePath(`/dashboard/zones/${zone.code}`);
@@ -57,6 +63,6 @@ export async function setZoneAssigneeAction(
 
   return {
     ok: true,
-    message: isCleared ? "지정을 해제했습니다." : "지정 제출자를 저장했습니다.",
+    message: isCleared ? "지정을 해제했습니다." : "저장했습니다.",
   };
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1790385078720,
+  "lastScanned": 1790654531687,
   "projectRoot": "/Users/jwoonsm5/Desktop/MacM5Dev/cleanup/clean",
   "techStack": {
     "languages": [
@@ -42,7 +42,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "echo \"=== zone-checklist 3파일 변경 여부 ===\" && ls -lT src/components/zone-checklist.tsx src/components/zone-a-checklist.tsx src/components/zone-b-checklist.tsx | awk '{print $6,$7,$8,$9,$NF}' && echo && echo \"=== A/B 판정 중복 여부 (registry 외) ===\" && grep -rn 'code.*===.*\"A\"\\|code.*===.*\"B\"\\|hasOwnChecklist' src/ && echo && echo \"=== lint ===\" && npm run lint 2>&1 | tail -6 && echo \"=== build ===\" && npm run build 2>&1 | tail -16",
+    "buildCommand": "npm run build 2>&1 | tail -25",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
@@ -74,7 +74,7 @@
       "path": "public",
       "purpose": "Public files",
       "fileCount": 5,
-      "lastAccessed": 1790385078611,
+      "lastAccessed": 1790654531675,
       "keyFiles": [
         "file.svg",
         "globe.svg",
@@ -87,14 +87,14 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1790385078612,
+      "lastAccessed": 1790654531676,
       "keyFiles": []
     },
     "supabase": {
       "path": "supabase",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1790385078615,
+      "lastAccessed": 1790654531677,
       "keyFiles": [
         "setup-all.sql"
       ]
@@ -103,7 +103,7 @@
       "path": "src/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1790385078615,
+      "lastAccessed": 1790654531677,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -113,30 +113,30 @@
     "src/components": {
       "path": "src/components",
       "purpose": "UI components",
-      "fileCount": 14,
-      "lastAccessed": 1790385078616,
+      "fileCount": 26,
+      "lastAccessed": 1790654531677,
       "keyFiles": [
         "checklist-form.tsx",
         "checklist-preview.tsx",
-        "copy-link-button.tsx"
+        "contact-notice.tsx"
       ]
     },
     "src/lib": {
       "path": "src/lib",
       "purpose": "Library code",
-      "fileCount": 5,
-      "lastAccessed": 1790385078616,
+      "fileCount": 8,
+      "lastAccessed": 1790654531678,
       "keyFiles": [
+        "assignee.ts",
         "checklist.ts",
-        "dal.ts",
-        "supabase.ts"
+        "dal.ts"
       ]
     },
     "src/types": {
       "path": "src/types",
       "purpose": "Type definitions",
       "fileCount": 1,
-      "lastAccessed": 1790385078616,
+      "lastAccessed": 1790654531678,
       "keyFiles": [
         "db.ts"
       ]
@@ -144,14 +144,46 @@
     "supabase/migrations": {
       "path": "supabase/migrations",
       "purpose": "Database migrations",
-      "fileCount": 2,
-      "lastAccessed": 1790385078616,
+      "fileCount": 4,
+      "lastAccessed": 1790654531678,
       "keyFiles": [
         "0000_db_test.sql",
-        "0002_align_schema.sql"
+        "0002_align_schema.sql",
+        "0003_single_submission_and_assignee.sql"
       ]
     }
   },
-  "hotPaths": [],
+  "hotPaths": [
+    {
+      "path": "src/lib/check-marks.ts",
+      "accessCount": 2,
+      "lastAccessed": 1790654701534,
+      "type": "file"
+    },
+    {
+      "path": "supabase/migrations/0005_zone_check_marks.sql",
+      "accessCount": 1,
+      "lastAccessed": 1790654653267,
+      "type": "file"
+    },
+    {
+      "path": "src/actions/check-marks.ts",
+      "accessCount": 1,
+      "lastAccessed": 1790654719251,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/supabase-browser.ts",
+      "accessCount": 1,
+      "lastAccessed": 1790654724794,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/use-zone-check-marks.ts",
+      "accessCount": 1,
+      "lastAccessed": 1790654777133,
+      "type": "file"
+    }
+  ],
   "userDirectives": []
 }

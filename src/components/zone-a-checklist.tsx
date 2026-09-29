@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ZoneChecklist,
   type ChecklistGroup,
   type CleaningTool,
   type ZoneChecklistConfig,
@@ -74,9 +73,8 @@ export const ZONE_A_CONFIG: ZoneChecklistConfig = {
   areaDescription:
     "담당구역: A구역 · 지하 탈의실(남/여), 침례장, 지하 로비+복도, 지하 식당1, 지하 창고3·4, 창고5(비품관리)",
   footerNote:
-    "* 체크·수량 입력은 이 브라우저에만 저장됩니다. 청소가 끝나면 청소부 요원(김현철 형제, 010-5329-2792)에게 결과를 알려주세요.",
+    "* 체크·수량 입력은 같은 구역 봉사자 모두에게 실시간으로 공유됩니다. 청소가 끝나면 청소부 요원(김현철 형제, 010-5329-2792)에게 결과를 알려주세요.",
   checklistStorageKey: "zone-a-checklist-v1",
-  suppliesStorageKey: "zone-a-supplies-v1",
   cleaningTools: CLEANING_TOOLS,
   defaultTabKey: "frequent",
   tabGridClass: "grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-5",
@@ -117,7 +115,3 @@ export const ZONE_A_CONFIG: ZoneChecklistConfig = {
     },
   ],
 };
-
-export function ZoneAChecklist() {
-  return <ZoneChecklist config={ZONE_A_CONFIG} />;
-}

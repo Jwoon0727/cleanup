@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getSupabase } from "@/lib/supabase";
 import type { FormState } from "@/lib/validation";
 
-/** 전역 리셋: 모든 구역의 제출 기록을 지우고 미청소로 되돌린다. 지정 제출자는 유지된다. */
+/** 전역 리셋: 모든 구역의 제출 기록·체크 상태를 지우고 미청소로 되돌린다. 지정 제출자는 유지된다. */
 export async function resetAllZonesAction(): Promise<FormState> {
   const supabase = getSupabase();
 
@@ -29,6 +29,14 @@ export async function resetAllZonesAction(): Promise<FormState> {
   if (deleteError)
     return { ok: false, message: `제출 기록 삭제 실패: ${deleteError.message}` };
 
+  const { error: marksError } = await supabase
+    .from("zone_check_marks")
+    .delete()
+    .in("zone_id", ids);
+
+  if (marksError)
+    return { ok: false, message: `체크 상태 삭제 실패: ${marksError.message}` };
+
   const { error: updateError } = await supabase
     .from("zones")
     .update({ status: "PENDING" })
@@ -50,7 +58,7 @@ export async function resetAllZonesAction(): Promise<FormState> {
   return { ok: true, message: `${zones.length}개 구역을 미청소로 되돌렸습니다.` };
 }
 
-/** 구역별 리셋: 이 구역의 제출 기록을 지우고 미청소로 되돌린다. 지정 제출자는 유지된다. */
+/** 구역별 리셋: 이 구역의 제출 기록·체크 상태를 지우고 미청소로 되돌린다. 지정 제출자는 유지된다. */
 export async function resetZoneAction(
   _prev: FormState,
   formData: FormData,
@@ -78,6 +86,14 @@ export async function resetZoneAction(
 
   if (deleteError)
     return { ok: false, message: `제출 기록 삭제 실패: ${deleteError.message}` };
+
+  const { error: marksError } = await supabase
+    .from("zone_check_marks")
+    .delete()
+    .eq("zone_id", zone.id);
+
+  if (marksError)
+    return { ok: false, message: `체크 상태 삭제 실패: ${marksError.message}` };
 
   const { error: updateError } = await supabase
     .from("zones")
