@@ -42,7 +42,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "npm run build 2>&1 | tail -25",
+    "buildCommand": "sed -i '' 's/{status !== \"polling\" ? (/{status !== \"disabled\" ? (/' src/components/zone-checklist.tsx && sed -n 195,215p src/lib/use-zone-check-marks.ts && npx tsc --noEmit -p . && npx eslint src/lib src/components/zone-checklist.tsx src/actions && echo OK",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",

@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"python3 - <<'EOF'\\np='src/lib/use-zone-check-marks.ts'\\ns=open(p).read()\\ndef rep(a,b):\\n    global s\\n    assert s.count(a)==1,a\\n    s=s.replace(a,b)\\nrep('/** live: 실시간 연결됨 / connecting...",
+  "error": "Exit code 2\nsrc/components/zone-checklist.tsx:224:      {status !== \"polling\" ? (\nsrc/components/zone-checklist.tsx(224,8): error TS2367: This comparison appears to be unintentional because the types 'SyncStatus' and '\"polling\"' have no overlap.",
+  "timestamp": "2026-09-29T04:27:08.287Z",
+  "retry_count": 1
+}

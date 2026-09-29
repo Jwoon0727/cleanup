@@ -6,7 +6,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
  * 브라우저용 Supabase 클라이언트 — Realtime 구독 전용.
  *
  * anon(publishable) 키만 쓰며 테이블은 RLS deny-all 이므로 DB 를 직접 읽거나 쓰지 않는다.
- * 키가 설정되지 않았으면 null 을 돌려주고, 호출 측은 주기적 재동기화로 대체한다.
+ * 키가 설정되지 않았으면 null 을 돌려주고, 호출 측은 화면 복귀 시 재동기화만 한다.
  */
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

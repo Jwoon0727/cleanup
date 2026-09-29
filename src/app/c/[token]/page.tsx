@@ -37,9 +37,6 @@ export default async function VolunteerChecklistPage({
     getSubmission(zone.id),
     submittable && ownChecklist ? getCheckMarks(zone.id) : {},
   ]);
-  const contactName = zone.contact_name;
-  const contactPhone = zone.contact_phone;
-
   return (
     <div className="flex flex-1 justify-center bg-brand-50 px-5 py-10">
       <div className="flex w-full max-w-lg flex-col gap-6">
@@ -47,15 +44,9 @@ export default async function VolunteerChecklistPage({
           <p className="text-xs font-medium tracking-wide text-zinc-500 uppercase">
             청소 체크리스트
           </p>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
-              {zone.label}
-            </h1>
-            <ContactNotice
-              contactName={contactName}
-              contactPhone={contactPhone}
-            />
-          </div>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
+            {zone.label}
+          </h1>
         </header>
 
         <ZoneImage code={zone.code} label={zone.label} />
@@ -106,8 +97,8 @@ export default async function VolunteerChecklistPage({
         )}
 
         <ContactNotice
-          contactName={contactName}
-          contactPhone={contactPhone}
+          contactName={zone.contact_name}
+          contactPhone={zone.contact_phone}
         />
       </div>
     </div>

@@ -130,7 +130,7 @@ function suppliesFromMarks(
 const SYNC_STATUS_META: Record<SyncStatus, { label: string; dot: string }> = {
   live: { label: "실시간 공유 중", dot: "bg-emerald-500" },
   connecting: { label: "연결 중…", dot: "bg-amber-400" },
-  polling: { label: "자동 동기화 중", dot: "bg-sky-500" },
+  disabled: { label: "실시간 공유 꺼짐", dot: "bg-zinc-400" },
   offline: { label: "연결 끊김 · 재연결 중", dot: "bg-red-500" },
 };
 
@@ -221,16 +221,18 @@ export function ZoneChecklist({
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-zinc-500">
-        <span className="inline-flex items-center gap-1.5">
-          <span
-            aria-hidden
-            className={`h-2 w-2 rounded-full ${SYNC_STATUS_META[status].dot}`}
-          />
-          {SYNC_STATUS_META[status].label}
-        </span>
-        <span>· 같은 구역 봉사자와 체크 상태가 공유됩니다.</span>
-      </div>
+      {status !== "disabled" ? (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-zinc-500">
+          <span className="inline-flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className={`h-2 w-2 rounded-full ${SYNC_STATUS_META[status].dot}`}
+            />
+            {SYNC_STATUS_META[status].label}
+          </span>
+          <span>· 같은 구역 봉사자와 체크 상태가 공유됩니다.</span>
+        </div>
+      ) : null}
 
       {error ? (
         <p

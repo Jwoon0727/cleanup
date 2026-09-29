@@ -18,12 +18,11 @@ import {
   isRealtimeConfigured,
 } from "@/lib/supabase-browser";
 
-/** live: 실시간 연결됨 / connecting: 연결 중 / polling: 실시간 미설정(주기적 동기화) / offline: 연결 끊김 */
-export type SyncStatus = "connecting" | "live" | "polling" | "offline";
+/** live: 실시간 연결됨 / connecting: 연결 중 / disabled: 실시간 미설정 / offline: 연결 끊김 */
+export type SyncStatus = "connecting" | "live" | "disabled" | "offline";
 
 type Change = { key: string; value: MarkValue | undefined; at: number };
 
-const POLL_MS = 5000;
 const SAVE_ERROR = "저장하지 못했습니다. 네트워크 연결을 확인해 주세요.";
 
 /**
@@ -40,7 +39,7 @@ export function useZoneCheckMarks(token: string, initial: MarkSnapshot) {
     Object.fromEntries(Object.entries(initial).map(([k, v]) => [k, v.value])),
   );
   const [status, setStatus] = useState<SyncStatus>(
-    isRealtimeConfigured ? "connecting" : "polling",
+    isRealtimeConfigured ? "connecting" : "disabled",
   );
   const [error, setError] = useState<string | null>(null);
 
@@ -206,14 +205,9 @@ export function useZoneCheckMarks(token: string, initial: MarkSnapshot) {
       window.removeEventListener("online", onOnline);
     };
 
+    // 실시간 키가 없으면 주기적 조회 없이 화면 복귀·온라인 복귀 때만 동기화한다.
     const supabase = getBrowserSupabase();
-    if (!supabase) {
-      const poll = setInterval(() => void resync(), POLL_MS);
-      return () => {
-        clearInterval(poll);
-        cleanupListeners();
-      };
-    }
+    if (!supabase) return cleanupListeners;
 
     const channel = supabase
       .channel(markChannelName(token))

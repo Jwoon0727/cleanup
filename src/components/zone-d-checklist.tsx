@@ -51,7 +51,7 @@ export const ZONE_D_CONFIG: ZoneChecklistConfig = {
   headerTitle: "청소 체크리스트 (D구역)",
   areaDescription: "담당구역: D구역",
   footerNote:
-    "* 체크·수량 입력은 같은 구역 봉사자 모두에게 실시간으로 공유됩니다. 청소가 끝나면 청소부 요원에게 결과를 알려주세요.",
+    "* 체크·수량 입력은 같은 구역 봉사자 모두에게 실시간으로 공유됩니다.",
   checklistStorageKey: "zone-d-checklist-v1",
   cleaningTools: CLEANING_TOOLS,
   defaultTabKey: "session",
