@@ -1,10 +1,8 @@
-"use client";
-
 import {
   type ChecklistGroup,
   type CleaningTool,
   type ZoneChecklistConfig,
-} from "@/components/zone-checklist";
+} from "@/lib/zone-checklist-types";
 
 const CLEANING_TOOLS: readonly CleaningTool[] = [
   { id: "glass-cleaner", label: "유리세정제" },

@@ -7,6 +7,7 @@ import { canVolunteerSubmit } from "@/lib/zone-status";
 import { isAssignedSubmitter } from "@/lib/assignee";
 import { checklistFieldName } from "@/lib/checklist";
 import { hasOwnChecklist } from "@/lib/zone-checklist-registry";
+import { getZoneConfig, requiredMarkKeys } from "@/lib/zone-checklist-configs";
 import type { Zone } from "@/types/db";
 
 /**
@@ -59,12 +60,35 @@ export async function submitChecklistAction(
     return { ok: false, message: "제출 권한이 없습니다." };
   }
 
-  // A·B 구역은 구역 전용(하드코딩) 체크리스트를 쓴다. DB checklist_items 조회/전부-체크
-  // 검증 없이 회중·이름만으로 제출을 받는다.
+  // A~H 구역은 구역 전용(하드코딩) 체크리스트를 쓴다. DB checklist_items 대신
+  // zone_check_marks 에 저장된 공유 체크 상태로 전부-체크를 검증한다.
   const ownChecklist = hasOwnChecklist(zone.code);
   let items: { id: string; label: string; sort_order: number }[] = [];
 
-  if (!ownChecklist) {
+  if (ownChecklist) {
+    const config = getZoneConfig(zone.code);
+    if (!config) return { ok: false, message: "체크리스트 설정을 찾을 수 없습니다." };
+
+    const { data: marks, error: marksError } = await supabase
+      .from("zone_check_marks")
+      .select("key, value")
+      .eq("zone_id", zone.id);
+
+    if (marksError)
+      return { ok: false, message: `체크 상태 조회 실패: ${marksError.message}` };
+
+    const done = new Set(
+      (marks ?? []).filter((m) => m.value === true).map((m) => m.key as string),
+    );
+    const missing = requiredMarkKeys(config).filter((k) => !done.has(k));
+
+    if (missing.length > 0) {
+      return {
+        ok: false,
+        message: `체크되지 않은 항목이 ${missing.length}개 있습니다. 모두 확인해 주세요.`,
+      };
+    }
+  } else {
     const { data: itemsData, error: itemsError } = await supabase
       .from("checklist_items")
       .select("*")
@@ -152,4 +176,62 @@ export async function submitChecklistAction(
   revalidatePath(`/c/${token}`);
 
   return { ok: true, message: "제출이 완료되었습니다. 수고하셨습니다!" };
+}
+
+/**
+ * 제출 취소(다시 열기).
+ * SUBMITTED 구역만 PENDING 으로 되돌리고 제출 기록을 지운다. 체크 상태(zone_check_marks)는 유지한다.
+ * submission_items·inspections 는 submissions 삭제 시 cascade 로 함께 지워진다.
+ */
+export async function reopenSubmissionAction(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const token = String(formData.get("token") ?? "");
+  if (!token) return { ok: false, message: "잘못된 접근입니다." };
+
+  const supabase = getSupabase();
+
+  const { data: zoneData, error: zoneError } = await supabase
+    .from("zones")
+    .select("*")
+    .eq("token", token)
+    .maybeSingle();
+
+  if (zoneError) return { ok: false, message: `구역 조회 실패: ${zoneError.message}` };
+
+  const zone = zoneData as Zone | null;
+  if (!zone) return { ok: false, message: "존재하지 않는 구역입니다." };
+
+  // 동시성 보호: SUBMITTED 일 때만 PENDING 으로 바꾼다.
+  const { data: reopened, error: reopenError } = await supabase
+    .from("zones")
+    .update({ status: "PENDING" })
+    .eq("id", zone.id)
+    .eq("status", "SUBMITTED")
+    .select("id");
+
+  if (reopenError)
+    return { ok: false, message: `상태 변경 실패: ${reopenError.message}` };
+
+  if (!reopened || reopened.length === 0) {
+    return { ok: false, message: "제출 완료 상태가 아니어서 다시 열 수 없습니다." };
+  }
+
+  const { error: deleteError } = await supabase
+    .from("submissions")
+    .delete()
+    .eq("zone_id", zone.id);
+
+  if (deleteError) {
+    // 제출 기록이 남은 채 PENDING 이 되지 않도록 되돌린다.
+    await supabase.from("zones").update({ status: "SUBMITTED" }).eq("id", zone.id);
+    return { ok: false, message: `제출 기록 삭제 실패: ${deleteError.message}` };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/zones/${zone.code}`);
+  revalidatePath(`/c/${token}`);
+
+  return { ok: true, message: "제출을 취소하고 다시 열었습니다." };
 }

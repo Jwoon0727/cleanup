@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getSupabase } from "@/lib/supabase";
 import type { FormState } from "@/lib/validation";
 
-/** 전역 리셋: 모든 구역의 제출 기록·체크 상태를 지우고 미청소로 되돌린다. 지정 제출자는 유지된다. */
+/** 전역 리셋: 모든 구역의 제출 기록·체크 상태를 지우고 미완료로 되돌린다. 지정 제출자는 유지된다. */
 export async function resetAllZonesAction(): Promise<FormState> {
   const supabase = getSupabase();
 
@@ -55,10 +55,10 @@ export async function resetAllZonesAction(): Promise<FormState> {
     revalidatePath(`/c/${zone.token}`);
   }
 
-  return { ok: true, message: `${zones.length}개 구역을 미청소로 되돌렸습니다.` };
+  return { ok: true, message: `${zones.length}개 구역을 미완료로 되돌렸습니다.` };
 }
 
-/** 구역별 리셋: 이 구역의 제출 기록·체크 상태를 지우고 미청소로 되돌린다. 지정 제출자는 유지된다. */
+/** 구역별 리셋: 이 구역의 제출 기록·체크 상태를 지우고 미완료로 되돌린다. 지정 제출자는 유지된다. */
 export async function resetZoneAction(
   _prev: FormState,
   formData: FormData,
@@ -111,5 +111,5 @@ export async function resetZoneAction(
   revalidatePath(`/dashboard/zones/${zone.code}`);
   revalidatePath(`/c/${zone.token}`);
 
-  return { ok: true, message: `${zone.label} 을 미청소로 되돌렸습니다.` };
+  return { ok: true, message: `${zone.label} 을 미완료로 되돌렸습니다.` };
 }

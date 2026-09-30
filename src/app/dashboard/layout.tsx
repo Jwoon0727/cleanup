@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RefreshPageButton } from "@/components/refresh-page-button";
 
 export default function DashboardLayout({
   children,
@@ -11,8 +12,9 @@ export default function DashboardLayout({
             href="/dashboard"
             className="text-base font-semibold tracking-tight text-zinc-900"
           >
-            천안대회회관 청소구역 관리
+            천안대회회관 청소구역 관리 (충청 6나)
           </Link>
+          <RefreshPageButton />
         </div>
       </header>
 

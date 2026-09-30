@@ -1,10 +1,8 @@
-"use client";
-
 import {
   type ChecklistGroup,
   type CleaningTool,
   type ZoneChecklistConfig,
-} from "@/components/zone-checklist";
+} from "@/lib/zone-checklist-types";
 
 const CLEANING_TOOLS: readonly CleaningTool[] = [
   { id: "glass-cleaner", label: "유리세정제" },
@@ -23,36 +21,40 @@ const CLEANING_TOOLS: readonly CleaningTool[] = [
 
 const duringSessionGroups: ChecklistGroup[] = [
   {
-    title: "1층 청중석 전체",
-    hint: "청소도구 : 손걸레",
-    items: ["화장실 쓰레기통 비우기 및 화장지 확인"],
+    title: "2층 서편 화장실(남, 여)",
+    hint: "청소 도구 : 손걸레, 변기솔, 세제, 대걸레",
+    items: ["쓰레기통 비우기", "화장지 확인"],
   },
 ];
 
 const afterMeetingGroups: ChecklistGroup[] = [
   {
-    title: "1층 연단(사회자실, 연사대기실, 확성실, 화장실, 창고1)",
-    hint: "청소도구 : 진공청소기(연단쪽 창고에 있음), 손걸레, 변기솔, 세제",
+    title: "2층 서편 화장실(남, 여)",
+    hint: "청소 도구 : 손걸레, 변기솔, 세제, 대걸레",
+    items: ["세면대", "변기 청소", "바닥 대걸레질"],
+  },
+  {
+    title: "2층 청중석 전체, 서편복도",
+    hint: "청소도구 : 손걸레, 빗자루, 쓰레받이, 대걸레",
     items: [
-      "연단 및 대기실 쪽, 복도 카페트 진공청소기",
-      "정수기 물통 비우기",
-      "쓰레기통 비우기",
-      "테이블/연탁 등 손걸레",
+      "청중석 의자 손걸레",
+      "바닥 쓰레기 줍기",
+      "복도 바닥 빗자루 및 대걸레질",
     ],
   },
   {
-    title: "1층 청중석 전체",
+    title: "2층 수유실",
     hint: "청소도구 : 손걸레",
-    items: ["청중석 의자 손걸레", "바닥 쓰레기 줍기"],
+    items: ["수유실 바닥 걸레질"],
   },
 ];
 
-export const ZONE_D_CONFIG: ZoneChecklistConfig = {
-  headerTitle: "청소 체크리스트 (D구역)",
-  areaDescription: "담당구역: D구역",
+export const ZONE_G_CONFIG: ZoneChecklistConfig = {
+  headerTitle: "청소 체크리스트 (G구역)",
+  areaDescription: "담당구역: G구역",
   footerNote:
     "* 체크·수량 입력은 같은 구역 봉사자 모두에게 실시간으로 공유됩니다.",
-  checklistStorageKey: "zone-d-checklist-v1",
+  checklistStorageKey: "zone-g-checklist-v1",
   cleaningTools: CLEANING_TOOLS,
   defaultTabKey: "session",
   tabGridClass: "grid grid-cols-2 gap-1.5 sm:grid-cols-3",

@@ -9,12 +9,12 @@ type StatusMeta = {
 
 export const ZONE_STATUS_META: Record<ZoneStatus, StatusMeta> = {
   PENDING: {
-    label: "미청소",
+    label: "미완료",
     className:
       "bg-zinc-100 text-zinc-500 ring-zinc-200",
   },
   SUBMITTED: {
-    label: "청소완료",
+    label: "청소 완료",
     className:
       "bg-emerald-50 text-emerald-700 ring-emerald-200",
   },

@@ -36,8 +36,8 @@ export function ResetForm(props: Props) {
     <div className="flex flex-col gap-2 rounded-lg bg-amber-50 p-3 ring-1 ring-inset ring-amber-200">
       <p className="text-xs leading-5 text-amber-900">
         {props.scope === "all"
-          ? "모든 구역의 제출 기록을 지우고 미청소로 되돌립니다. 되돌릴 수 없습니다."
-          : "이 구역의 제출 기록을 지우고 미청소로 되돌립니다. 되돌릴 수 없습니다."}{" "}
+          ? "모든 구역의 제출 기록을 지우고 미완료로 되돌립니다. 되돌릴 수 없습니다."
+          : "이 구역의 제출 기록을 지우고 미완료로 되돌립니다. 되돌릴 수 없습니다."}{" "}
         지정 제출자는 유지됩니다.
       </p>
 

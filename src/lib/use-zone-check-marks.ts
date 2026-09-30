@@ -49,6 +49,7 @@ export function useZoneCheckMarks(token: string, initial: MarkSnapshot) {
   );
   const pendingRef = useRef<Record<string, number>>({});
   const timersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const initialFingerprint = JSON.stringify(initial);
 
   const update = useCallback(
     (fn: (draft: Record<string, MarkValue>) => void) => {
@@ -191,6 +192,19 @@ export function useZoneCheckMarks(token: string, initial: MarkSnapshot) {
     },
     [token, update, resync],
   );
+
+  /** 페이지 새로고침(router.refresh) 후 서버에서 내려온 initial 과 맞춘다. */
+  useEffect(() => {
+    const nextMarks = Object.fromEntries(
+      Object.entries(initial).map(([k, v]) => [k, v.value]),
+    );
+    const nextAt = Object.fromEntries(
+      Object.entries(initial).map(([k, v]) => [k, v.at]),
+    );
+    marksRef.current = nextMarks;
+    atRef.current = nextAt;
+    setMarksState(nextMarks);
+  }, [initialFingerprint, token]);
 
   useEffect(() => {
     const onVisible = () => {

@@ -1,40 +1,47 @@
 "use client";
 
+import { useState } from "react";
+import { ChecklistForm } from "@/components/checklist-form";
 import { ZoneChecklist } from "@/components/zone-checklist";
 import type { MarkSnapshot } from "@/lib/check-marks";
-import { ZONE_A_CONFIG } from "@/components/zone-a-checklist";
-import { ZONE_B_CONFIG } from "@/components/zone-b-checklist";
-import { ZONE_C_CONFIG } from "@/components/zone-c-checklist";
-import { ZONE_D_CONFIG } from "@/components/zone-d-checklist";
-import { ZONE_E_CONFIG } from "@/components/zone-e-checklist";
-import { ZONE_F_CONFIG } from "@/components/zone-f-checklist";
-import { ZONE_G_CONFIG } from "@/components/zone-g-checklist";
-import { ZONE_H_CONFIG } from "@/components/zone-h-checklist";
+import { getZoneConfig } from "@/lib/zone-checklist-configs";
 
-const CONFIG_BY_CODE = {
-  A: ZONE_A_CONFIG,
-  B: ZONE_B_CONFIG,
-  C: ZONE_C_CONFIG,
-  D: ZONE_D_CONFIG,
-  E: ZONE_E_CONFIG,
-  F: ZONE_F_CONFIG,
-  G: ZONE_G_CONFIG,
-  H: ZONE_H_CONFIG,
-} as const;
-
+/**
+ * 구역 전용 체크리스트 + 제출 폼.
+ * 체크 상태는 ZoneChecklist 안의 공유 훅이 갖고, 남은 필수 항목 수만 폼으로 올려 보낸다.
+ */
 export function ZoneChecklistByCode({
   code,
   token,
   initialMarks,
+  hasAssignee,
 }: {
   code: string;
   token: string;
   initialMarks: MarkSnapshot;
+  /** 주면 제출 폼도 함께 그린다(봉사자 페이지). 생략하면 체크리스트만(대시보드). */
+  hasAssignee?: boolean;
 }) {
-  const config = CONFIG_BY_CODE[code.toUpperCase() as keyof typeof CONFIG_BY_CODE];
+  const config = getZoneConfig(code);
+  const [remaining, setRemaining] = useState<number | null>(null);
   if (!config) return null;
 
   return (
-    <ZoneChecklist config={config} token={token} initialMarks={initialMarks} />
+    <>
+      <ZoneChecklist
+        config={config}
+        token={token}
+        initialMarks={initialMarks}
+        onRemainingChange={setRemaining}
+      />
+      {hasAssignee !== undefined && (
+        <ChecklistForm
+          token={token}
+          items={[]}
+          hasAssignee={hasAssignee}
+          remainingRequired={remaining ?? undefined}
+        />
+      )}
+    </>
   );
 }

@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { RefreshPageButton } from "@/components/refresh-page-button";
 import { ChecklistForm } from "@/components/checklist-form";
+import { ReopenButton } from "@/components/reopen-button";
 import { ContactNotice } from "@/components/contact-notice";
 import { ZoneChecklistByCode } from "@/components/zone-checklist-by-code";
 import { ZoneCleaningManual } from "@/components/zone-cleaning-manual";
@@ -40,13 +42,16 @@ export default async function VolunteerChecklistPage({
   return (
     <div className="flex flex-1 justify-center bg-brand-50 px-5 py-10">
       <div className="flex w-full max-w-lg flex-col gap-6">
-        <header>
-          <p className="text-xs font-medium tracking-wide text-zinc-500 uppercase">
-            청소 체크리스트
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
-            {zone.label}
-          </h1>
+        <header className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-medium tracking-wide text-zinc-500 uppercase">
+              청소 체크리스트
+            </p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
+              {zone.label}
+            </h1>
+          </div>
+          <RefreshPageButton className="shrink-0 rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 ring-1 ring-inset ring-brand-200 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50" />
         </header>
 
         <ZoneImage code={zone.code} label={zone.label} />
@@ -60,10 +65,6 @@ export default async function VolunteerChecklistPage({
                 code={zone.code}
                 token={zone.token}
                 initialMarks={checkMarks}
-              />
-              <ChecklistForm
-                token={zone.token}
-                items={[]}
                 hasAssignee={hasAssignee(zone)}
               />
             </>
@@ -93,6 +94,7 @@ export default async function VolunteerChecklistPage({
                 {new Date(submission.submitted_at).toLocaleString("ko-KR")}
               </p>
             )}
+            <ReopenButton token={zone.token} className="mt-5" />
           </div>
         )}
 

@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { submitChecklistAction } from "@/actions/submissions";
 import { checklistFieldName } from "@/lib/checklist";
 import { FormMessage } from "@/components/form-message";
+import { ReopenButton } from "@/components/reopen-button";
 import { SubmitButton } from "@/components/submit-button";
 import type { FormState } from "@/lib/validation";
 import type { ChecklistItem } from "@/types/db";
@@ -15,10 +16,13 @@ export function ChecklistForm({
   token,
   items,
   hasAssignee,
+  remainingRequired,
 }: {
   token: string;
   items: ChecklistItem[];
   hasAssignee: boolean;
+  /** 구역 전용 체크리스트(items 없음)에서 아직 체크되지 않은 필수 항목 수 */
+  remainingRequired?: number;
 }) {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [congregation, setCongregation] = useState("");
@@ -31,7 +35,9 @@ export function ChecklistForm({
   );
 
   const checkedCount = items.filter((item) => checked[item.id]).length;
-  const allChecked = items.length === 0 || checkedCount === items.length;
+  const remaining =
+    items.length === 0 ? (remainingRequired ?? 0) : items.length - checkedCount;
+  const allChecked = remaining === 0;
   const canSubmit =
     allChecked && congregation.trim().length > 0 && volunteerName.trim().length > 0;
 
@@ -53,6 +59,7 @@ export function ChecklistForm({
         <p className="mt-2 text-sm text-emerald-800">
           {state.message}
         </p>
+        <ReopenButton token={token} className="mt-5" />
       </div>
     );
   }
@@ -172,8 +179,8 @@ export function ChecklistForm({
               </SubmitButton>
               {!canSubmit && (
                 <p className="text-center text-xs text-zinc-500">
-                  {items.length > 0 && !allChecked
-                    ? `모든 항목을 체크해 주세요. (${items.length - checkedCount}개 남음)`
+                  {!allChecked
+                    ? `모든 항목을 체크해 주세요. (${remaining}개 남음)`
                     : "회중과 이름을 입력해 주세요."}
                 </p>
               )}

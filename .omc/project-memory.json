@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1790654531687,
+  "lastScanned": 1790759334895,
   "projectRoot": "/Users/jwoonsm5/Desktop/MacM5Dev/cleanup/clean",
   "techStack": {
     "languages": [
@@ -42,7 +42,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "sed -i '' 's/{status !== \"polling\" ? (/{status !== \"disabled\" ? (/' src/components/zone-checklist.tsx && sed -n 195,215p src/lib/use-zone-check-marks.ts && npx tsc --noEmit -p . && npx eslint src/lib src/components/zone-checklist.tsx src/actions && echo OK",
+    "buildCommand": "npm run build",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
@@ -74,7 +74,7 @@
       "path": "public",
       "purpose": "Public files",
       "fileCount": 5,
-      "lastAccessed": 1790654531675,
+      "lastAccessed": 1790759334871,
       "keyFiles": [
         "file.svg",
         "globe.svg",
@@ -87,14 +87,14 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1790654531676,
+      "lastAccessed": 1790759334883,
       "keyFiles": []
     },
     "supabase": {
       "path": "supabase",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1790654531677,
+      "lastAccessed": 1790759334883,
       "keyFiles": [
         "setup-all.sql"
       ]
@@ -103,7 +103,7 @@
       "path": "src/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1790654531677,
+      "lastAccessed": 1790759334883,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -114,7 +114,7 @@
       "path": "src/components",
       "purpose": "UI components",
       "fileCount": 26,
-      "lastAccessed": 1790654531677,
+      "lastAccessed": 1790759334884,
       "keyFiles": [
         "checklist-form.tsx",
         "checklist-preview.tsx",
@@ -124,19 +124,19 @@
     "src/lib": {
       "path": "src/lib",
       "purpose": "Library code",
-      "fileCount": 8,
-      "lastAccessed": 1790654531678,
+      "fileCount": 11,
+      "lastAccessed": 1790759334884,
       "keyFiles": [
         "assignee.ts",
-        "checklist.ts",
-        "dal.ts"
+        "check-marks.ts",
+        "checklist.ts"
       ]
     },
     "src/types": {
       "path": "src/types",
       "purpose": "Type definitions",
       "fileCount": 1,
-      "lastAccessed": 1790654531678,
+      "lastAccessed": 1790759334885,
       "keyFiles": [
         "db.ts"
       ]
@@ -144,8 +144,8 @@
     "supabase/migrations": {
       "path": "supabase/migrations",
       "purpose": "Database migrations",
-      "fileCount": 4,
-      "lastAccessed": 1790654531678,
+      "fileCount": 5,
+      "lastAccessed": 1790759334885,
       "keyFiles": [
         "0000_db_test.sql",
         "0002_align_schema.sql",

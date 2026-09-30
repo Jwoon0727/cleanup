@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "천안대회회관 청소구역 관리",
+    default: "천안대회회관 청소구역 관리 (충청 6나)",
     template: "%s",
   },
   description: "청소 구역별 체크리스트 작성과 검사 관리",

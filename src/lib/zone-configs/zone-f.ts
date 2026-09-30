@@ -1,10 +1,8 @@
-"use client";
-
 import {
   type ChecklistGroup,
   type CleaningTool,
   type ZoneChecklistConfig,
-} from "@/components/zone-checklist";
+} from "@/lib/zone-checklist-types";
 
 const CLEANING_TOOLS: readonly CleaningTool[] = [
   { id: "glass-cleaner", label: "유리세정제" },
@@ -23,7 +21,7 @@ const CLEANING_TOOLS: readonly CleaningTool[] = [
 
 const duringSessionGroups: ChecklistGroup[] = [
   {
-    title: "2층 동편 화장실(남, 여)",
+    title: "1층 동편 화장실(남, 여)",
     hint: "청소 도구 : 손걸레, 변기솔, 세제, 대걸레",
     items: ["쓰레기통 비우기 및 화장지 확인"],
   },
@@ -31,40 +29,38 @@ const duringSessionGroups: ChecklistGroup[] = [
 
 const afterLunchGroups: ChecklistGroup[] = [
   {
-    title: "2층 식당",
-    hint: "청소 도구 : 손걸레, 빗자루, 쓰레받이, 대걸레",
-    items: ["정수기 물통 비우기"],
+    title: "1층 동편 식당+부서사무실",
+    hint: "청소도구 : 손걸레, 빗자루, 쓰레받이, 대걸레",
+    items: ["정수기 물통 비우기", "쓰레기통 비우기"],
   },
 ];
 
 const afterMeetingGroups: ChecklistGroup[] = [
   {
-    title: "2층 로비, 동편 복도",
-    hint: "청소 도구 : 빗자루, 쓰레받이, 대걸레",
-    items: ["바닥 빗자루 및 대걸레질"],
-  },
-  {
-    title: "2층 식당",
-    hint: "청소 도구 : 손걸레, 빗자루, 쓰레받이, 대걸레",
+    title: "1층 동편 식당+부서사무실",
+    hint: "청소도구 : 손걸레, 빗자루, 쓰레받이, 대걸레",
     items: [
       "정수기 물통 비우기",
+      "쓰레기통 비우기",
       "식당 테이블 닦기",
-      "바닥 빗자루 및 대걸레질",
+      "식당 바닥 빗자루 및 대걸레질",
+      "부서사무실 책상 닦기",
+      "부서사무실 바닥 빗자루 및 대걸레질",
     ],
   },
   {
-    title: "2층 동편 화장실(남, 여)",
-    hint: "청소 도구 : 손걸레, 변기솔, 세제, 대걸레",
+    title: "1층 동편 화장실(남, 여)",
+    hint: "청소도구 : 손걸레, 변기솔, 세제, 대걸레",
     items: ["세면대", "변기 청소", "바닥 대걸레질"],
   },
 ];
 
-export const ZONE_H_CONFIG: ZoneChecklistConfig = {
-  headerTitle: "청소 체크리스트 (H구역)",
-  areaDescription: "담당구역: H구역",
+export const ZONE_F_CONFIG: ZoneChecklistConfig = {
+  headerTitle: "청소 체크리스트 (F구역)",
+  areaDescription: "담당구역: F구역",
   footerNote:
     "* 체크·수량 입력은 같은 구역 봉사자 모두에게 실시간으로 공유됩니다.",
-  checklistStorageKey: "zone-h-checklist-v1",
+  checklistStorageKey: "zone-f-checklist-v1",
   cleaningTools: CLEANING_TOOLS,
   defaultTabKey: "session",
   tabGridClass: "grid grid-cols-2 gap-1.5 sm:grid-cols-4",
