@@ -69,7 +69,7 @@ export function ZoneAssigneeForm({ zone }: { zone: Zone }) {
             onChange={(e) => setName(e.target.value)}
             maxLength={50}
             className={inputClass}
-            placeholder="예) 최정운"
+            placeholder="예) 홍길동"
           />
         </div>
 
@@ -91,7 +91,7 @@ export function ZoneAssigneeForm({ zone }: { zone: Zone }) {
             onChange={(e) => setContactName(e.target.value)}
             maxLength={50}
             className={inputClass}
-            placeholder="예) 김현철 형제"
+            placeholder="예) 홍길동"
           />
         </div>
 
@@ -106,7 +106,7 @@ export function ZoneAssigneeForm({ zone }: { zone: Zone }) {
             onChange={(e) => setContactPhone(e.target.value)}
             maxLength={30}
             className={inputClass}
-            placeholder="예) 010-5329-2792"
+            placeholder="예) 01012341234"
           />
         </div>
 
