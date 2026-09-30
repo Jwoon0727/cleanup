@@ -99,6 +99,7 @@ export default async function VolunteerChecklistPage({
         )}
 
         <ContactNotice
+          zoneLabel={zone.label}
           contactName={zone.contact_name}
           contactPhone={zone.contact_phone}
         />

@@ -76,7 +76,7 @@ export function ZoneAssigneeForm({ zone }: { zone: Zone }) {
         <div className="border-t border-brand-100 pt-4">
           <p className="text-sm font-semibold text-zinc-900">청소부 요원 (결과 연락)</p>
           <p className="mt-1 text-xs text-zinc-500">
-            봉사자 URL 하단에 &quot;청소가 끝나면 청소부 요원(이름, 연락처)에게 결과를 알려주세요&quot; 안내로 표시됩니다.
+            봉사자 URL 하단에 구역 담당자 이름·연락처 안내로 표시됩니다.
           </p>
         </div>
 

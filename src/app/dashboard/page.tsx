@@ -1,4 +1,4 @@
-import { DashboardOrgChart } from "@/components/dashboard-org-chart";
+import { OrgChartCard } from "@/components/org-chart-card";
 import { ResetForm } from "@/components/reset-form";
 import { ZoneCard } from "@/components/zone-card";
 import { getSubmission, listZones } from "@/lib/dal";
@@ -47,10 +47,9 @@ export default async function DashboardPage() {
           {cards.map(({ zone, submittedAt }) => (
             <ZoneCard key={zone.id} zone={zone} submittedAt={submittedAt} />
           ))}
+          <OrgChartCard />
         </div>
       )}
-
-      <DashboardOrgChart />
     </div>
   );
 }

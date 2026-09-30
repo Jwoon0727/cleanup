@@ -3,20 +3,17 @@ export function toTelHref(phone: string): string {
   return `tel:${phone.replace(/[^\d+]/g, "")}`;
 }
 
-const badgeClass =
-  "inline-flex max-w-full flex-wrap items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium leading-5 text-blue-700 ring-1 ring-inset ring-blue-200";
-
 const phoneLinkClass =
-  "underline decoration-blue-400/70 underline-offset-2 hover:text-blue-900";
+  "font-semibold underline decoration-blue-500/60 underline-offset-2 hover:text-blue-950";
 
 export function ContactNotice({
+  zoneLabel,
   contactName,
   contactPhone,
-  className = badgeClass,
 }: {
+  zoneLabel: string;
   contactName?: string | null;
   contactPhone?: string | null;
-  className?: string;
 }) {
   const name = contactName?.trim() || "";
   const phone = contactPhone?.trim() || "";
@@ -28,17 +25,31 @@ export function ContactNotice({
     </a>
   ) : null;
 
-  return (
-    <span className={className}>
+  const assigneeLine = (
+    <>
+      ({zoneLabel} 담당자:{" "}
       {name && phone ? (
         <>
-          청소가 완료되면 {name} 요원 형제({phoneLink})에게 연락바랍니다.
+          {name} {phoneLink}
         </>
       ) : name ? (
-        <>청소가 완료되면 {name} 요원 형제에게 연락바랍니다.</>
+        name
       ) : (
-        <>청소가 완료되면 {phoneLink}으로 연락바랍니다.</>
+        phoneLink
       )}
-    </span>
+      )
+    </>
+  );
+
+  return (
+    <aside className="rounded-2xl bg-blue-50 px-4 py-4 ring-1 ring-inset ring-blue-200 sm:px-5 sm:py-5">
+      <p className="text-sm leading-relaxed text-blue-900 sm:text-base">
+        청소에 관한 문의 사항이 있을 경우, 청소가 완료된 경우 아래 담당자에게
+        연락해 주시기 바랍니다.
+      </p>
+      <p className="mt-3 text-base font-semibold leading-relaxed text-blue-950 sm:text-lg">
+        {assigneeLine}
+      </p>
+    </aside>
   );
 }
