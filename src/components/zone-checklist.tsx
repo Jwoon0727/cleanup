@@ -311,23 +311,6 @@ export function ZoneChecklist({
         aria-label={activeTab.label}
         className="flex flex-col gap-4"
       >
-        {checklistTab?.key === "frequent" ? (
-          <p className="rounded-lg bg-amber-50 px-3 py-2.5 text-xs leading-5 text-amber-900 ring-1 ring-inset ring-amber-200">
-            대회 중 <strong className="font-semibold">수시로</strong> 담당
-            구역을 돌며 점검할 때 체크하세요. 한 바퀴 순찰이 끝나면 우측 상단{" "}
-            <strong className="font-semibold">현재 탭 초기화</strong>로 다음
-            순찰을 시작할 수 있습니다.
-          </p>
-        ) : null}
-        {checklistTab?.key === "session" ? (
-          <p className="rounded-lg bg-amber-50 px-3 py-2.5 text-xs leading-5 text-amber-900 ring-1 ring-inset ring-amber-200">
-            <strong className="font-semibold">회기 중</strong> 담당 구역을
-            점검할 때 체크하세요. 한 바퀴 점검이 끝나면 우측 상단{" "}
-            <strong className="font-semibold">현재 탭 초기화</strong>로 다음
-            점검을 시작할 수 있습니다.
-          </p>
-        ) : null}
-
         {activeTab.kind === "supplies" ? (
           <>
             <div className="rounded-xl bg-brand-50/60 p-4 ring-1 ring-inset ring-brand-100">
