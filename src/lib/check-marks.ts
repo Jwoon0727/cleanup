@@ -54,3 +54,37 @@ export const markPrefixSchema = z
   .string()
   .max(100)
   .regex(/^(c:[A-Za-z0-9_-]+::|[qr]:)$/);
+
+/** 클라이언트가 모아 두었다가 한 번에 보내는 저장 단위. 순서대로 적용된다. */
+export type MarkOp =
+  | { t: "set"; key: string; value: MarkValue }
+  | { t: "clear"; prefixes: string[] };
+
+export const markOpsSchema = z
+  .array(
+    z.discriminatedUnion("t", [
+      z.object({ t: z.literal("set"), key: markKeySchema, value: markValueSchema }),
+      z.object({ t: z.literal("clear"), prefixes: markPrefixSchema.array().min(1).max(5) }),
+    ]),
+  )
+  .min(1)
+  .max(200);
+
+export const opTouchesKey = (op: MarkOp, key: string) =>
+  op.t === "set" ? op.key === key : op.prefixes.some((p) => key.startsWith(p));
+
+/**
+ * 같은 결과를 내는 더 짧은 목록으로 줄인다.
+ * 뒤의 set/clear 가 덮어쓰는 앞의 set 은 보낼 필요가 없다.
+ */
+export function coalesceOps(ops: MarkOp[]): MarkOp[] {
+  const out: MarkOp[] = [];
+  for (const op of ops) {
+    for (let i = out.length - 1; i >= 0; i--) {
+      const prev = out[i];
+      if (prev.t === "set" && opTouchesKey(op, prev.key)) out.splice(i, 1);
+    }
+    out.push(op);
+  }
+  return out;
+}

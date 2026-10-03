@@ -17,12 +17,15 @@ export function ChecklistForm({
   items,
   hasAssignee,
   remainingRequired,
+  unsavedCount = 0,
 }: {
   token: string;
   items: ChecklistItem[];
   hasAssignee: boolean;
   /** 구역 전용 체크리스트(items 없음)에서 아직 체크되지 않은 필수 항목 수 */
   remainingRequired?: number;
+  /** 서버에 아직 저장되지 않은 체크 수. 0 이 될 때까지 제출을 막는다. */
+  unsavedCount?: number;
 }) {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [congregation, setCongregation] = useState("");
@@ -38,8 +41,12 @@ export function ChecklistForm({
   const remaining =
     items.length === 0 ? (remainingRequired ?? 0) : items.length - checkedCount;
   const allChecked = remaining === 0;
+  const saved = unsavedCount === 0;
   const canSubmit =
-    allChecked && congregation.trim().length > 0 && volunteerName.trim().length > 0;
+    allChecked &&
+    saved &&
+    congregation.trim().length > 0 &&
+    volunteerName.trim().length > 0;
 
   const authorSummary =
     congregation.trim() && volunteerName.trim()
@@ -181,7 +188,9 @@ export function ChecklistForm({
                 <p className="text-center text-xs text-zinc-500">
                   {!allChecked
                     ? `모든 항목을 체크해 주세요. (${remaining}개 남음)`
-                    : "회중과 이름을 입력해 주세요."}
+                    : !saved
+                      ? `체크 내용을 저장하는 중입니다. 잠시만 기다려 주세요. (${unsavedCount}건)`
+                      : "회중과 이름을 입력해 주세요."}
                 </p>
               )}
             </div>

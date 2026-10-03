@@ -24,6 +24,7 @@ export function ZoneChecklistByCode({
 }) {
   const config = getZoneConfig(code);
   const [remaining, setRemaining] = useState<number | null>(null);
+  const [unsaved, setUnsaved] = useState(0);
   if (!config) return null;
 
   return (
@@ -33,6 +34,7 @@ export function ZoneChecklistByCode({
         token={token}
         initialMarks={initialMarks}
         onRemainingChange={setRemaining}
+        onUnsavedChange={setUnsaved}
       />
       {hasAssignee !== undefined && (
         <ChecklistForm
@@ -40,6 +42,7 @@ export function ZoneChecklistByCode({
           items={[]}
           hasAssignee={hasAssignee}
           remainingRequired={remaining ?? undefined}
+          unsavedCount={unsaved}
         />
       )}
     </>

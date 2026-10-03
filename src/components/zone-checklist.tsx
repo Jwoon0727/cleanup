@@ -100,12 +100,15 @@ export function ZoneChecklist({
   token,
   initialMarks,
   onRemainingChange,
+  onUnsavedChange,
 }: {
   config: ZoneChecklistConfig;
   token: string;
   initialMarks: MarkSnapshot;
   /** 아직 체크되지 않은 필수 항목 수가 바뀔 때마다 호출 */
   onRemainingChange?: (remaining: number) => void;
+  /** 서버에 아직 저장되지 않은 변경 수가 바뀔 때마다 호출 */
+  onUnsavedChange?: (unsaved: number) => void;
 }) {
   const {
     headerTitle,
@@ -125,6 +128,8 @@ export function ZoneChecklist({
     marks: checked,
     status,
     error,
+    saveState,
+    unsavedCount,
     setMark,
     clearMarks,
   } = useZoneCheckMarks(token, initialMarks);
@@ -140,6 +145,9 @@ export function ZoneChecklist({
   useEffect(() => {
     onRemainingChange?.(remainingRequired);
   }, [remainingRequired, onRemainingChange]);
+  useEffect(() => {
+    onUnsavedChange?.(unsavedCount);
+  }, [unsavedCount, onUnsavedChange]);
 
   const toggle = (id: string) => setMark(id, checked[id] !== true);
 
@@ -202,6 +210,20 @@ export function ZoneChecklist({
           <span>· 같은 구역 봉사자와 체크 상태가 공유됩니다.</span>
         </div>
       ) : null}
+
+      {saveState === "retrying" ? (
+        <p
+          role="status"
+          className="rounded-lg bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900 ring-1 ring-inset ring-amber-200"
+        >
+          네트워크가 불안정해 저장을 다시 시도하는 중입니다 ({unsavedCount}건 대기).
+          입력한 내용은 이 기기에 보관되며, 연결되면 자동으로 저장됩니다.
+        </p>
+      ) : (
+        <p className="text-[11px] text-zinc-500" aria-live="polite">
+          {saveState === "saving" ? "저장 중…" : "✓ 모두 저장됨"}
+        </p>
+      )}
 
       {error ? (
         <p

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1790759334895,
+  "lastScanned": 1791030347748,
   "projectRoot": "/Users/jwoonsm5/Desktop/MacM5Dev/cleanup/clean",
   "techStack": {
     "languages": [
@@ -42,7 +42,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "npm run build",
+    "buildCommand": "npx eslint src next.config.ts 2>&1 | grep -E \"^\\s+[0-9]+:[0-9]+\"; npx tsc --noEmit -p . && echo TSC_OK; npm run build 2>&1 | tail -25",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
@@ -74,7 +74,7 @@
       "path": "public",
       "purpose": "Public files",
       "fileCount": 5,
-      "lastAccessed": 1790759334871,
+      "lastAccessed": 1791030347733,
       "keyFiles": [
         "file.svg",
         "globe.svg",
@@ -87,14 +87,14 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1790759334883,
+      "lastAccessed": 1791030347734,
       "keyFiles": []
     },
     "supabase": {
       "path": "supabase",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1790759334883,
+      "lastAccessed": 1791030347737,
       "keyFiles": [
         "setup-all.sql"
       ]
@@ -103,7 +103,7 @@
       "path": "src/app",
       "purpose": "Application code",
       "fileCount": 5,
-      "lastAccessed": 1790759334883,
+      "lastAccessed": 1791030347737,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -113,8 +113,8 @@
     "src/components": {
       "path": "src/components",
       "purpose": "UI components",
-      "fileCount": 26,
-      "lastAccessed": 1790759334884,
+      "fileCount": 23,
+      "lastAccessed": 1791030347737,
       "keyFiles": [
         "checklist-form.tsx",
         "checklist-preview.tsx",
@@ -124,8 +124,8 @@
     "src/lib": {
       "path": "src/lib",
       "purpose": "Library code",
-      "fileCount": 11,
-      "lastAccessed": 1790759334884,
+      "fileCount": 13,
+      "lastAccessed": 1791030347737,
       "keyFiles": [
         "assignee.ts",
         "check-marks.ts",
@@ -136,7 +136,7 @@
       "path": "src/types",
       "purpose": "Type definitions",
       "fileCount": 1,
-      "lastAccessed": 1790759334885,
+      "lastAccessed": 1791030347738,
       "keyFiles": [
         "db.ts"
       ]
@@ -145,7 +145,7 @@
       "path": "supabase/migrations",
       "purpose": "Database migrations",
       "fileCount": 5,
-      "lastAccessed": 1790759334885,
+      "lastAccessed": 1791030347738,
       "keyFiles": [
         "0000_db_test.sql",
         "0002_align_schema.sql",
@@ -156,8 +156,20 @@
   "hotPaths": [
     {
       "path": "src/lib/check-marks.ts",
+      "accessCount": 3,
+      "lastAccessed": 1791031518381,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/use-zone-check-marks.ts",
+      "accessCount": 3,
+      "lastAccessed": 1791031644369,
+      "type": "file"
+    },
+    {
+      "path": "src/actions/check-marks.ts",
       "accessCount": 2,
-      "lastAccessed": 1790654701534,
+      "lastAccessed": 1791031518518,
       "type": "file"
     },
     {
@@ -167,21 +179,21 @@
       "type": "file"
     },
     {
-      "path": "src/actions/check-marks.ts",
-      "accessCount": 1,
-      "lastAccessed": 1790654719251,
-      "type": "file"
-    },
-    {
       "path": "src/lib/supabase-browser.ts",
       "accessCount": 1,
       "lastAccessed": 1790654724794,
       "type": "file"
     },
     {
-      "path": "src/lib/use-zone-check-marks.ts",
+      "path": "lisk.md",
       "accessCount": 1,
-      "lastAccessed": 1790654777133,
+      "lastAccessed": 1791030605107,
+      "type": "file"
+    },
+    {
+      "path": "next.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1791031617444,
       "type": "file"
     }
   ],
